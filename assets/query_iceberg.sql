@@ -63,7 +63,7 @@ SELECT
        $8 as year,
        $9 as month,
        $10 as truck_brand,
-      DATEADD(HOUR, (ROW_NUMBER() OVER(ORDER BY seq8())-3), to_date('01-11-2022','dd-mm-yyyy')) as review_date
+       DATEADD(month,-UNIFORM(0,6,RANDOM()),CURRENT_DATE()) as review_date
 FROM @stg_truck_reviews 
 (FILE_FORMAT => 'FF_CSV',
 PATTERN => '.*reviews.*[.]csv') 
