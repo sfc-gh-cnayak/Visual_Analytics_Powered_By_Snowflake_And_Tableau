@@ -77,7 +77,7 @@ Duration: 5
 ### Load data into Raw Tables 
 [Download and Run loadraw.sql](assets/tab_load_raw.sql)
 
-## Data Collaboration 
+## Data Collaboration  
 
 ### Let's Bring Weather Data
 [To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file](assets/tb_collaboration_vhol.sql)
