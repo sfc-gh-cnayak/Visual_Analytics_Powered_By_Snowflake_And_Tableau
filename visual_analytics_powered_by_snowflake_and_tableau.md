@@ -65,22 +65,82 @@ Duration: 2
 Duration: 5
 
 ### Create Snowflake Database and Warehouse 
-[Download and Run create_db_wh.sql](assets/create_db_wh.sql)
+[Download and Run create_db_wh.sql](scripts/create_db_wh.sql)
 
 
 ### Grant Privileges on Snowflake Objects
-[Download and Run grantperms.sql](assets/grant_perms.sql)
+[Download and Run grantperms.sql](scripts/grant_perms.sql)
 
 ### Create Snowflake Stages and Native Tables
-[Download and Run createobjects.sql](assets/create_objects.sql)
+[Download and Run createobjects.sql](scripts/create_objects.sql)
 
 ### Load data into Raw Tables 
-[Download and Run loadraw.sql](assets/tab_load_raw.sql)
+[Download and Run loadraw.sql](scripts/tab_load_raw.sql)
 
-## Data Collaboration  
+
+## DataLake Integration 
+
+### Create the necessary AWS Configuration 
+Duration: 15 
+
+#### Download the Customer Reviews files to your laptop
+![zipfile](assets/2022.zip)
+unzip the file before you load into AWS bucket
+
+**Login to AWS Account, and create a bucket in the same region as your Snowflake account**
+
+![img](assets/create_bucket.png)
+
+#### Upload the folder from your laptop to the S3 bucket.
+![img](assets/Upload_Folder.png)
+
+#### Take a note of your AWS Account ID.
+![img](assets/account_id.png)
+
+**Now, in your Snowflake account**
+
+[Download and Run SQL for s3_integration](scripts/aws_integration.sql)
+```sql
+
+USE DATABASE frostbyte_tasty_bytes;
+USE SCHEMA raw_customer;
+
+CREATE or REPLACE STORAGE INTEGRATION <name the storage integration>
+  TYPE = EXTERNAL_STAGE
+  STORAGE_PROVIDER = 'S3'
+  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<your AWS account ID>:role/<give a name for IAM role>' -- ex: snow_s3_access_role
+  ENABLED = TRUE
+  STORAGE_ALLOWED_LOCATIONS = ('s3://<name of your S3 bucket>/');
+
+DESC INTEGRATION <name of the integration>; -- you will need the output of these values in AWS CloudFormation
+
+CREATE OR REPLACE FILE FORMAT ff_csv
+    TYPE = 'csv'
+    SKIP_HEADER = 1   
+    FIELD_DELIMITER = '|';
+
+CREATE OR REPLACE STAGE stg_truck_reviews
+    STORAGE_INTEGRATION = s3_int
+    URL = 's3://<name of your S3 bucket>/'
+    FILE_FORMAT = ff_csv;
+```
+
+### Launch the AWS CloudFormation 
+**Click the template and login to AWS** [CloudFormationTemplate](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Snowflake-storage-integration&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/CFTs/storageInt.json)
+
+![cftemplate](assets/CloudFormation.png) 
+![storagedetails](assets/CFT.png)
+
+**Select defaults for remaining screens** 
+
+### Create Snowflake managed Iceberg Tables to access Datalake 
+Download and Run Queries on Customer review Data
+[Review Data](scripts/query_iceberg.sql)
+
+## Data Collaboration  [Optional]
 
 ### Let's Bring Weather Data
-[To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run SQL file](assets/tb_collaboration_vhol.sql)
+To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run [collab SQL file](scripts/tb_collaboration_vhol.sql)
 
 ```sql
 /*----------------------------------------------------------------------------------
@@ -99,14 +159,16 @@ USE WAREHOUSE tasty_de_wh;
 
 SELECT 
     o.date,
-    SUM(o.price) AS daily_sales
+    round(SUM(ZEROIFNULL(o.price))) AS daily_sales
 FROM frostbyte_tasty_bytes.analytics.orders_v o
 WHERE 1=1
     AND o.country = 'Germany'
     AND o.primary_city = 'Hamburg'
-    AND DATE(o.order_ts) BETWEEN '2022-02-10' AND '2022-02-25'
-GROUP BY o.date
-ORDER BY o.date ASC; 
+    AND DATE(o.order_ts) BETWEEN '2024-02-10' AND '2024-02-25'
+GROUP BY o.date 
+--HAVING daily_sales <= 0
+ORDER BY o.date ASC ;
+
 ```
 
 
@@ -153,11 +215,10 @@ FROM frostbyte_tasty_bytes.harmonized.daily_weather_v dw
 WHERE 1=1
     AND dw.country_desc = 'Germany'
     AND dw.city_name = 'Hamburg'
-    AND YEAR(date_valid_std) = '2022'
+    AND YEAR(date_valid_std) = '2024'
     AND MONTH(date_valid_std) = '2'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std DESC;
-
 
 --  Step 4 - Bringing in Wind and Rain Metrics
 SELECT 
@@ -169,12 +230,11 @@ FROM frostbyte_tasty_bytes.harmonized.daily_weather_v dw
 WHERE 1=1
     AND dw.country_desc IN ('Germany')
     AND dw.city_name = 'Hamburg'
-    AND YEAR(date_valid_std) = '2022'
+    AND YEAR(date_valid_std) = '2024'
     AND MONTH(date_valid_std) = '2'
-    AND date_valid_std between '2022-02-10' and  '2022-02-25'
+    AND date_valid_std between '2024-02-10' and  '2024-02-25'
 GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
 ORDER BY dw.date_valid_std ASC;
-
 ``` 
 ### Democratizing Data Insights 
 ```sql
@@ -222,8 +282,8 @@ LEFT JOIN frostbyte_tasty_bytes.harmonized.orders_v odv
 WHERE 1=1
     AND fd.country_desc = 'Germany'
     AND fd.city = 'Hamburg'
-    AND fd.yyyy_mm = '2022-02'
-    AND date_valid_std between '2022-02-10' and  '2022-02-25'
+    AND fd.yyyy_mm = '2024-02'
+    AND date_valid_std between '2024-02-10' and  '2024-02-25'
 GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc
 ORDER BY fd.date_valid_std ASC;
 
@@ -261,7 +321,7 @@ GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
 ----------------------------------------------------------------------------------*/
 
 --  Section 6: Step 1 - Simplifying our Analysis
--- Wind Speed seems had a major Impact 
+-- High Temperature and Wind Speed seems had a major Impact 
 SELECT 
     dcm.date,
     dcm.city_name,
@@ -276,69 +336,11 @@ FROM frostbyte_tasty_bytes.analytics.daily_city_metrics_v dcm
 WHERE 1=1
     AND dcm.country_desc = 'Germany'
     AND dcm.city_name = 'Hamburg'
-    AND dcm.date BETWEEN '2022-02-10' AND '2022-02-25'
+    AND dcm.date BETWEEN '2024-02-10' AND '2024-02-25'
 ORDER BY date ASC;
 ```
 <!-- ------------------------ -->
 
-## DataLake Integration 
-
-### Create the necessary AWS Configuration 
-Duration: 15 
-
-#### Download the Customer Reviews files to your laptop
-![zipfile](assets/2022.zip)
-unzip the file before you load into AWS bucket
-
-**Login to AWS Account, and create a bucket in the same region as your Snowflake account**
-
-![img](assets/create_bucket.png)
-
-#### Upload the folder from your laptop to the S3 bucket.
-![img](assets/Upload_Folder.png)
-
-#### Take a note of your AWS Account ID.
-![img](assets/account_id.png)
-
-**Now, in your Snowflake account**
-
-[Download and Run SQL for s3_integration](assets/aws_integration.sql)
-```sql
-
-USE DATABASE frostbyte_tasty_bytes;
-USE SCHEMA raw_customer;
-
-CREATE or REPLACE STORAGE INTEGRATION <name the storage integration>
-  TYPE = EXTERNAL_STAGE
-  STORAGE_PROVIDER = 'S3'
-  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<your AWS account ID>:role/<give a name for IAM role>' -- ex: snow_s3_access_role
-  ENABLED = TRUE
-  STORAGE_ALLOWED_LOCATIONS = ('s3://<name of your S3 bucket>/');
-
-DESC INTEGRATION <name of the integration>; -- you will need the output of these values in AWS CloudFormation
-
-CREATE OR REPLACE FILE FORMAT ff_csv
-    TYPE = 'csv'
-    SKIP_HEADER = 1   
-    FIELD_DELIMITER = '|';
-
-CREATE OR REPLACE STAGE stg_truck_reviews
-    STORAGE_INTEGRATION = s3_int
-    URL = 's3://<name of your S3 bucket>/'
-    FILE_FORMAT = ff_csv;
-```
-
-### Launch the AWS CloudFormation 
-**Click the template and login to AWS** [CloudFormationTemplate](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Snowflake-storage-integration&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/CFTs/storageInt.json)
-
-![cftemplate](assets/CloudFormation.png) 
-![storagedetails](assets/CFT.png)
-
-**Select defaults for remaining screens** 
-
-### Create Snowflake managed Iceberg Tables to access Datalake 
-
-[Download and Run Queries on Customer Review Data](assets/query_iceberg.sql)
 
 ## Login to Tableau Online & Connect to Snowflake
 
@@ -663,7 +665,7 @@ Congratulations! you have completed the lab.
 
 In this lab we captured semi-structured data coming from TastyBytes food truck data, enriched that weather data from Snowflake Marketplace data to find correlation between food sales and weather. We visualized the data using Tableau to quickly arrive at new insights.
 
-[ Download tb_reset_vhol.sql & create Worksheet to run SQL file](/assets/tb_reset_vhol.sql)
+[ Download tb_reset_vhol.sql & create Worksheet to run SQL file](scripts/tb_reset_vhol.sql)
 
 
 [Semi-structured Data](https://docs.snowflake.com/en/user-guide/semistructured-concepts.html)
