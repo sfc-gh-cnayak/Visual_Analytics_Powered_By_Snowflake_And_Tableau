@@ -129,6 +129,9 @@ CREATE OR REPLACE STAGE stg_truck_reviews
 **Click the template and login to AWS** [CloudFormationTemplate](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=Snowflake-storage-integration&templateURL=https://snowflake-corp-se-workshop.s3.us-west-1.amazonaws.com/CFTs/storageInt.json)
 
 ![cftemplate](assets/CloudFormation.png) 
+#### Now you need to copy the following values from Snowflake Storage Integration 
+![desc_storintegration](assets/descInt.png)
+
 ![storagedetails](assets/CFT.png)
 
 **Select defaults for remaining screens** 

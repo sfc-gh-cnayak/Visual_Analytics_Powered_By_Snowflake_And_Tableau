@@ -9,7 +9,7 @@ CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
                 STORAGE_PROVIDER = 'S3'
                 STORAGE_BASE_URL = 's3://jnanreviews'
                 STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<aws-account-id>:role/<snow_role>' --ex:snow_s3_access_role 
-                STORAGE_AWS_EXTERNAL_ID = 'RJB12004_SFCRole=4_zSAasUofMUwWxe/Hk98JqRTv2T4=' 
+                STORAGE_AWS_EXTERNAL_ID = 'external_id' -- enter your external id 
             )
             
         )ALLOW_WRITES=true; 
