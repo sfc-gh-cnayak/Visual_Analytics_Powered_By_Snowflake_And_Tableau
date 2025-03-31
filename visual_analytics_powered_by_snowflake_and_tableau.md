@@ -132,9 +132,10 @@ CREATE OR REPLACE STAGE stg_truck_reviews
 #### Now you need to copy the following values from Snowflake Storage Integration 
 ![desc_storintegration](assets/descInt.png)
 
+#### Copy the values below  
 ![storagedetails](assets/CFT.png)
 
-**Select defaults for remaining screens** 
+**Select defaults for remaining screens and submit** 
 
 ### Create Snowflake managed Iceberg Tables to access Datalake 
 Download and Run Queries on Customer review Data
