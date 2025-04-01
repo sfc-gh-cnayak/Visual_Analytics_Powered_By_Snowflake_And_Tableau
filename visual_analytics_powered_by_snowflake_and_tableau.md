@@ -64,18 +64,20 @@ Duration: 2
 
 Duration: 5
 
-### Create Snowflake Database and Warehouse 
-[Download and Run create_db_wh.sql](scripts/create_db_wh.sql)
+### Run the scripts in a Snowsight or VSCode 
+
+#### Create Snowflake Database and Warehouse 
+[Click here to download  create_db_wh.sql](scripts/create_db_wh.sql)
 
 
-### Grant Privileges on Snowflake Objects
-[Download and Run grantperms.sql](scripts/grant_perms.sql)
+#### Grant Privileges on Snowflake Objects
+[Click here to download grantperms.sql](scripts/grant_perms.sql)
 
-### Create Snowflake Stages and Native Tables
-[Download and Run createobjects.sql](scripts/create_objects.sql)
+#### Create Snowflake Stages and Native Tables
+[Click here to download createobjects.sql](scripts/create_objects.sql)
 
-### Load data into Raw Tables 
-[Download and Run loadraw.sql](scripts/tab_load_raw.sql)
+#### Load data into Raw Tables 
+[Click here to download loadraw.sql](scripts/tab_load_raw.sql)
 
 
 ## DataLake Integration 
@@ -84,8 +86,9 @@ Duration: 5
 Duration: 15 
 
 #### Download the Customer Reviews files to your laptop
-![zipfile](assets/2022.zip)
+
 unzip the file before you load into AWS bucket
+[click here to download for reviews zipfile](assets/2022.zip)
 
 **Login to AWS Account, and create a bucket in the same region as your Snowflake account**
 
@@ -99,7 +102,7 @@ unzip the file before you load into AWS bucket
 
 **Now, in your Snowflake account**
 
-[Download and Run SQL for s3_integration](scripts/aws_integration.sql)
+[click here to download SQL for s3_integration](scripts/aws_integration.sql)
 ```sql
 
 USE DATABASE frostbyte_tasty_bytes;
@@ -141,7 +144,187 @@ CREATE OR REPLACE STAGE stg_truck_reviews
 Download and Run Queries on Customer review Data
 [Review Data](scripts/query_iceberg.sql)
 
-## Data Collaboration  [Optional]
+
+<!-- ------------------------ -->
+
+
+## Login to Tableau Online & Connect to Snowflake
+
+Duration: 20
+
+Navigate to https://online.tableau.com/ and login to Tableau Cloud (Online) using your login credentials.
+
+If using a trial site, make sure you have agent and Pulse enabled - see this video for instructions https://www.youtube.com/watch?v=I9jQt0xM_JY&ab_channel=Tableau
+
+<br>
+
+You will be redirected to the Tableau Cloud (Online) Home page. Within the blue “Welcome to your Tableau site” banner, click into the “New” dropdown and select “Workbook”.
+
+ ![A](assets/Tab_1.2.png)
+
+<br>
+
+You will be automatically prompted to connect to a data source. Within the “Connect to Data” popup window, select “Connectors”. Find *Snowflake* in the grid.
+Note: you may need to use the horizontal bottom scrollbar at the bottom of the window and scroll to the right of the “Connections" tab.
+
+ ![A](assets/Tab_1.3.png)
+
+<br>
+
+Enter the Server name. Note that you will need to remove the 'https://' from the name (see screenshot). You can find the server name [insert instructions here] Change the authentication method to username/password, enter your credentials & then click the blue “Sign in” button.
+
+ ![A](assets/no_https_in_server_name.png)
+
+<br>
+
+Within the connections pane, make the following selections:
+
+* Warehouse: your warehouse
+* Database: FROSTBYTE_TASTY_BYTES
+* Schema: ANALYTICS
+
+
+A list of tables will appear:
+
+ ![A](assets/Tableau_Canvas_3.png)
+
+
+<br>
+
+Click and drag the 'ORDERS_V' table where it says “Drag tables here”.
+
+<br>
+
+Next, click and drag the 'PRODUCT_FINAL REVIEWS' to the Canvas. This will create a relationship. In Tableau, a relationship is a flexible way to do multi-table analysis without creating one large flat table. Make sure that the fields are mapped correctly by matching 'Primary City’, ‘Truck ID’, and ‘Order ID’.
+
+![A](assets/Tableau_Relations_4.png)
+
+Drag Customer Loyalty Metrics out to the canvas, and map Orders and Customer Loyalty Metrics table by joining on ‘Customer ID’.
+
+![Joins](assets/Tableau_Joins_5.png)
+
+Let’s publish this data source and call it ‘Frostbyte’. Embed the credentials for now.
+
+![list_ds](assets/Tableau_Data_5.png)
+
+Click Publish.
+
+<!-- ------------------------ -->
+
+<!-- ------------------------ -->
+
+<br>
+
+## Visualize Data
+
+Now we are ready to visualize our data! Click ‘Go to Frostbye’. From the published data source, click ‘New’ and select ‘New Workbook’. In the bottom left of the screen, click “Sheet 1”.
+
+ ![publish](assets/Tableau_Publish_7.png)
+
+ ![workbook](assets/Tableau_Workbook_8.png)
+<br>
+
+We'll start by getting a quick sense of how each Truck Brand is doing in terms of reviews. Start a Tableau Agent session by clicking the astro logo in the top right corner. Click ‘Got it’ to initiate the session. Then, click ‘Suggestions’.
+
+![agent](assets/Tableau_agent_9.png)
+
+![suggest](assets/Tableau_Suggest_10.png)
+
+<br>
+Click on any suggestion. It may take time for Tableau Agent to index your data. See how it will build the visualization for you, and also give you feedback in the agent chat itself. 
+<br>
+
+
+![Options](assets/Tableau_Options_11.png)
+
+Next, type in ‘Compare average reviews by truck brand’ and hit enter. See how the visualization is created. 
+
+![Wiz](assets/Tableau_wiz_12.png)
+
+Now Tableau Agent is iterative, so lets add complexity to the viz by dragging and dropping. we don’t have to just use the chat to build this. Drag ‘Primary City’ from the sentiment table to the rows shelf, to the left of ‘Truck Brand Name’.
+
+<br>
+
+![Tableau_Dash](assets/Tableau_Dash_13.png)
+
+Now we can see the breakdown of sentiment for each truck in each city- and look, there is some average negative sentiment! Let’s focus on only those trucks.
+Next, let’s use an agent to filter the data. Type in ‘filter to only trucks with negative average reviews for each city’ and hit enter.
+
+<br>
+
+![Tableau_Agent](assets/Tableau_agent_14.png)
+
+Wow, this might be something to take note of. We should help those truck owners out and figure out how we can increase our service or quality, since it seems customers are disappointed and have bad associations with those trucks in those cities. 
+
+![completed_wkbk](assets/Tableau_wbook_15.png)
+
+Finally, we’ll want to see if it’s a busy truck, and how many orders are coming through those trucks, to figure out where to focus first. I’ll drag out ‘Count Orders_V’ onto the Color tab in the details pane.
+
+![Publish_wkbk](assets/Tableau_Dash_16.png)
+
+Looks like we should focus on trucks in Mumbai first, as they are getting the most orders, and have negative reviews. 
+
+Save the workbook.
+
+
+<!-- ------------------------ -->
+
+<!-- ------------------------ -->
+
+<br>
+
+## Publish
+![Publish_final_reviews](assets/Tableau_publish_rw_work_17.png)
+
+Lets see if we can track that over time and get alerts on any dropping review sentiment using Tableau Pulse. Save this
+![Close](assets/Tableau_close_18.png)
+
+
+<br>
+Next, navigate to Tableau Pulse. Click ‘New Metric Definition’.
+
+![Pulse](assets/Tableau_Pulse_19.png)
+
+
+![pulse_metric](assets/Tableau_pulse_metric_20.png)
+
+Select the data source you just published named ‘Frostbyte’.
+
+![create_def](assets/Tableau_create_pulse_21.png)
+Name your pulse metric ‘Average Review Sentiment’ and fill out the values in the screenshot. We want to track average final review sentiment over the date. Select ‘Review Sentiment’, ‘Average aggregation, and ‘Review Date’ as the time dimension.
+
+![save_metric](assets/Tableau_Pulse_save_22.png)
+
+<br>
+
+Add filters such as ‘Truck Brand Name’ and ‘Primary City’.
+
+![filter](assets/Tableau_P_filter_23.png)
+
+![Save_Insight](assets/Tableau_24.png)
+
+Click Next, Next, until you get to the Records and Transitions page. Since we don’t have unique identifiers for the reviews, we will turn this setting off.
+
+![sent_metric](assets/Tableau_25.png)
+
+Your Metric should look something like this. Click save, and your published metric should load automatically.
+![present_metric](assets/Tableau_26.png)
+
+New: Set a goal to 0.25, or a value between 0 and 1, to get notified every time average sentiment across all trucks goes below that number. 
+
+![Goal](assets/Tableau_27.png)
+
+Click Save.
+
+
+Congratulations! You have successfully completed the Tableau portion.
+
+
+<br>
+
+<!-- ------------------------ -->
+
+## Data Collaboration  [Optional Snowflake Content]
 
 ### Let's Bring Weather Data
 To skip individual command download tb_collaboration_vhol.sql & create Worksheet to run [collab SQL file](scripts/tb_collaboration_vhol.sql)
@@ -343,185 +526,6 @@ WHERE 1=1
     AND dcm.date BETWEEN '2024-02-10' AND '2024-02-25'
 ORDER BY date ASC;
 ```
-<!-- ------------------------ -->
-
-
-## Login to Tableau Online & Connect to Snowflake
-
-Duration: 20
-
-Navigate to https://online.tableau.com/ and login to Tableau Cloud (Online) using your login credentials.
-
-If using a trial site, make sure you have agent and Pulse enabled - see this video for instructions https://www.youtube.com/watch?v=I9jQt0xM_JY&ab_channel=Tableau
-
-<br>
-
-You will be redirected to the Tableau Cloud (Online) Home page. Within the blue “Welcome to your Tableau site” banner, click into the “New” dropdown and select “Workbook”.
-
- ![A](assets/Tab_1.2.png)
-
-<br>
-
-You will be automatically prompted to connect to a data source. Within the “Connect to Data” popup window, select “Connectors”. Find *Snowflake* in the grid.
-Note: you may need to use the horizontal bottom scrollbar at the bottom of the window and scroll to the right of the “Connections" tab.
-
- ![A](assets/Tab_1.3.png)
-
-<br>
-
-Enter the Server name. Note that you will need to remove the 'https://' from the name (see screenshot). You can find the server name [insert instructions here] Change the authentication method to username/password, enter your credentials & then click the blue “Sign in” button.
-
- ![A](assets/no_https_in_server_name.png)
-
-<br>
-
-Within the connections pane, make the following selections:
-
-* Warehouse: your warehouse
-* Database: FROSTBYTE_TASTY_BYTES
-* Schema: ANALYTICS
-
-
-A list of tables will appear:
-
- ![A](assets/Tableau_Canvas_3.png)
-
-
-<br>
-
-Click and drag the 'ORDERS_V' table where it says “Drag tables here”.
-
-<br>
-
-Next, click and drag the 'PRODUCT_FINAL REVIEWS' to the Canvas. This will create a relationship. In Tableau, a relationship is a flexible way to do multi-table analysis without creating one large flat table. Make sure that the fields are mapped correctly by matching 'Primary City’, ‘Truck ID’, and ‘Order ID’.
-
-![A](assets/Tableau_Relations_4.png)
-
-Drag Customer Loyalty Metrics out to the canvas, and map Orders and Customer Loyalty Metrics table by joining on ‘Customer ID’.
-
-![Joins](assets/Tableau_Joins_5.png)
-
-Let’s publish this data source and call it ‘Frostbyte’. Embed the credentials for now.
-
-![list_ds](assets/Tableau_Data_5.png)
-
-Click Publish.
-
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
-
-<br>
-
-## Visualize Data
-
-Now we are ready to visualize our data! Click ‘Go to Frostbye’. From the published data source, click ‘New’ and select ‘New Workbook’. In the bottom left of the screen, click “Sheet 1”.
-
- ![publish](assets/Tableau_Publish_7.png)
-
- ![workbook](assets/Tableau_Workbook_8.png)
-<br>
-
-We'll start by getting a quick sense of how each Truck Brand is doing in terms of reviews. Start a Tableau Agent session by clicking the astro logo in the top right corner. Click ‘Got it’ to initiate the session. Then, click ‘Suggestions’.
-
-![agent](assets/Tableau_agent_9.png)
-
-![suggest](assets/Tableau_Suggest_10.png)
-
-<br>
-Click on any suggestion. It may take time for Tableau Agent to index your data. See how it will build the visualization for you, and also give you feedback in the agent chat itself. 
-<br>
-
-
-![Options](assets/Tableau_Options_11.png)
-
-Next, type in ‘Compare average reviews by truck brand’ and hit enter. See how the visualization is created. 
-
-![Wiz](assets/Tableau_wiz_12.png)
-
-Now Tableau Agent is iterative, so lets add complexity to the viz by dragging and dropping. we don’t have to just use the chat to build this. Drag ‘Primary City’ from the sentiment table to the rows shelf, to the left of ‘Truck Brand Name’.
-
-<br>
-
-![Tableau_Dash](assets/Tableau_Dash_13.png)
-
-Now we can see the breakdown of sentiment for each truck in each city- and look, there is some average negative sentiment! Let’s focus on only those trucks.
-Next, let’s use an agent to filter the data. Type in ‘filter to only trucks with negative average reviews for each city’ and hit enter.
-
-<br>
-
-![Tableau_Agent](assets/Tableau_agent_14.png)
-
-Wow, this might be something to take note of. We should help those truck owners out and figure out how we can increase our service or quality, since it seems customers are disappointed and have bad associations with those trucks in those cities. 
-
-![completed_wkbk](assets/Tableau_wbook_15.png)
-
-Finally, we’ll want to see if it’s a busy truck, and how many orders are coming through those trucks, to figure out where to focus first. I’ll drag out ‘Count Orders_V’ onto the Color tab in the details pane.
-
-![Publish_wkbk](assets/Tableau_Dash_16.png)
-
-Looks like we should focus on trucks in Mumbai first, as they are getting the most orders, and have negative reviews. 
-
-Save the workbook.
-
-
-<!-- ------------------------ -->
-
-<!-- ------------------------ -->
-
-<br>
-
-## Publish
-![Publish_final_reviews](assets/Tableau_publish_rw_work_17.png)
-
-Lets see if we can track that over time and get alerts on any dropping review sentiment using Tableau Pulse. Save this
-![Close](assets/Tableau_close_18.png)
-
-
-<br>
-Next, navigate to Tableau Pulse. Click ‘New Metric Definition’.
-
-![Pulse](assets/Tableau_Pulse_19.png)
-
-
-![pulse_metric](assets/Tableau_pulse_metric_20.png)
-
-Select the data source you just published named ‘Frostbyte’.
-
-![create_def](assets/Tableau_create_pulse_21.png)
-Name your pulse metric ‘Average Review Sentiment’ and fill out the values in the screenshot. We want to track average final review sentiment over the date. Select ‘Review Sentiment’, ‘Average aggregation, and ‘Review Date’ as the time dimension.
-
-![save_metric](assets/Tableau_Pulse_save_22.png)
-
-<br>
-
-Add filters such as ‘Truck Brand Name’ and ‘Primary City’.
-
-![filter](assets/Tableau_P_filter_23.png)
-
-![Save_Insight](assets/Tableau_24.png)
-
-Click Next, Next, until you get to the Records and Transitions page. Since we don’t have unique identifiers for the reviews, we will turn this setting off.
-
-![sent_metric](assets/Tableau_25.png)
-
-Your Metric should look something like this. Click save, and your published metric should load automatically.
-![present_metric](assets/Tableau_26.png)
-
-New: Set a goal to 0.25, or a value between 0 and 1, to get notified every time average sentiment across all trucks goes below that number. 
-
-![Goal](assets/Tableau_27.png)
-
-Click Save.
-
-
-Congratulations! You have successfully completed the Tableau portion.
-
-
-<br>
-
-<!-- ------------------------ -->
-
 <!-- ------------------------ -->
 
 <br>
