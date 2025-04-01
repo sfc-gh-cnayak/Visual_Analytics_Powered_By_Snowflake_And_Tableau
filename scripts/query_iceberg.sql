@@ -1,6 +1,10 @@
 USE ROLE ACCOUNTADMIN;
 USE DATABASE  frostbyte_tasty_bytes;
 USE SCHEMA raw_customer;
+--- Test if your AWS Storage is Accessible 
+SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION('<integration_name>',    's3://<bucket>/',    'validate_all.txt', 'all'); 
+
+
 CREATE OR REPLACE EXTERNAL VOLUME vol_tastybytes_truckreviews
     STORAGE_LOCATIONS =
         (
