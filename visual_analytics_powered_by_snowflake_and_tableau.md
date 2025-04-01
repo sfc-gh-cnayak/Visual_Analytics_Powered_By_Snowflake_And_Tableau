@@ -348,11 +348,11 @@ ORDER BY date ASC;
 
 ## Login to Tableau Online & Connect to Snowflake
 
-Duration: 30
+Duration: 20
 
 Navigate to https://online.tableau.com/ and login to Tableau Cloud (Online) using your login credentials.
 
- ![A](assets/Tab_1.1.png)
+If using a trial site, make sure you have agent and Pulse enabled - see this video for instructions https://www.youtube.com/watch?v=I9jQt0xM_JY&ab_channel=Tableau
 
 <br>
 
@@ -384,7 +384,7 @@ Within the connections pane, make the following selections:
 
 A list of tables will appear:
 
- ![A](assets/select_tables.png)
+ ![A](assets/Tableau_Canvas_3.png)
 
 
 <br>
@@ -393,44 +393,19 @@ Click and drag the 'ORDERS_V' table where it says “Drag tables here”.
 
 <br>
 
-Next, click and drag the 'DAILY_CITY_WEATHER_V' to the Canvas. This will create a relationship. In Tableau, a relationship is a flexible way to do multi-table analysis without creating one large flat table. Make sure that the fields are mapped correctly by matching 'Date' and 'Date' and matching 'City Name' and 'City'.
+Next, click and drag the 'PRODUCT_FINAL REVIEWS' to the Canvas. This will create a relationship. In Tableau, a relationship is a flexible way to do multi-table analysis without creating one large flat table. Make sure that the fields are mapped correctly by matching 'Primary City’, ‘Truck ID’, and ‘Order ID’.
 
-![A](assets/relationship_map.png)
+![A](assets/Tableau_Relations_4.png)
 
-<!-- ------------------------ -->
+Drag Customer Loyalty Metrics out to the canvas, and map Orders and Customer Loyalty Metrics table by joining on ‘Customer ID’.
 
-<!-- ------------------------ -->
+![Joins](assets/Tableau_Joins_5.png)
 
-<br>
+Let’s publish this data source and call it ‘Frostbyte’. Embed the credentials for now.
 
-## Configure Data Source Filters
+![list_ds](assets/Tableau_Data_5.png)
 
-By adding data source filters, we can exclude any outliers that may hinder performance or skew our data. 
-
-In the top right corner of the screen, locate where it says “Filters”. Under “Filters”, there is a button that says “Add”. Click the “Add” button.
-
- ![A](assets/add_data_source_filter_click.png)
-
-<br>
-
-On the bottom left of the pop-up “Edit Data Source Filters” window, click “Add Filter”.
-
- ![A](assets/Tab_2.2.png)
-
-<br>
-
-Within the pop-up, start typing “Date”. Click the “Date” field.
-
-<br>
-
-When the options for different types of date filters appear, click “Range of Dates”, then click Next> and enter the range 1/1/2022 to 11/1/2022. After that, click the blue “OK” button in the bottom right of the pop-up. Then click 'OK' once you see the list of all data source filters.
-
- ![A](assets/relative_date_filter_config.png)
-
-<br>
-
-
-<br>
+Click Publish.
 
 <!-- ------------------------ -->
 
@@ -440,188 +415,54 @@ When the options for different types of date filters appear, click “Range of D
 
 ## Visualize Data
 
-Now we are ready to visualize our data! In the bottom left of the screen, click “Sheet 1”.
+Now we are ready to visualize our data! Click ‘Go to Frostbye’. From the published data source, click ‘New’ and select ‘New Workbook’. In the bottom left of the screen, click “Sheet 1”.
 
- ![A](assets/Tab_3.1.png)
+ ![publish](assets/Tableau_Publish_7.png)
+
+ ![workbook](assets/Tableau_Workbook_8.png)
+<br>
+
+We'll start by getting a quick sense of how each Truck Brand is doing in terms of reviews. Start a Tableau Agent session by clicking the astro logo in the top right corner. Click ‘Got it’ to initiate the session. Then, click ‘Suggestions’.
+
+![agent](assets/Tableau_agent_9.png)
+
+![suggest](assets/Tableau_Suggest_10.png)
+
+<br>
+Click on any suggestion. It may take time for Tableau Agent to index your data. See how it will build the visualization for you, and also give you feedback in the agent chat itself. 
+<br>
+
+
+![Options](assets/Tableau_Options_11.png)
+
+Next, type in ‘Compare average reviews by truck brand’ and hit enter. See how the visualization is created. 
+
+![Wiz](assets/Tableau_wiz_12.png)
+
+Now Tableau Agent is iterative, so lets add complexity to the viz by dragging and dropping. we don’t have to just use the chat to build this. Drag ‘Primary City’ from the sentiment table to the rows shelf, to the left of ‘Truck Brand Name’.
 
 <br>
 
-We'll start by getting a quick sense of how each city is doing in terms of sales. Drag out Longitude to columns and Latitude to rows to Double click 'Primary City' and 'Country' fields from the 'Orders_v' table. Then click and drag 'Truck Brand Name' to the details tile on the marks card. This will create a map that shows where each of the trucks sell. 
+![Tableau_Dash](assets/Tableau_Dash_13.png)
 
- ![A](assets/double_click_city_country.png)
-
-<br>
-
-
-Now, this map shows us where we have data, but it doesn't tell us anything about the performance of each of those trucks in cities. Drag Order Total to the size tile on the marks card. You'll see the size of the mark correlate to the sum of order totals for that city. Let's drag Quantity to color, so that we can get a sense of the relationship between the number of items sold and the amount of revenue generated. 
-
- ![A](assets/add_order_total_to_size.png)
- 
- ![A](assets/add_quantity_to_color.png)
+Now we can see the breakdown of sentiment for each truck in each city- and look, there is some average negative sentiment! Let’s focus on only those trucks.
+Next, let’s use an agent to filter the data. Type in ‘filter to only trucks with negative average reviews for each city’ and hit enter.
 
 <br>
 
-We also want to filter to just one city at a time, because its hard to see the different truck locations when the map is zoomed out. Right-click PrimaryCity on the details tile and select 'Show Filter'. then, when the filter pops up on the right hand side, click the carrot on the right and select 'Single-Value (list)'. This will change the filter settings to only allow you to select one city at a time.
+![Tableau_Agent](assets/Tableau_agent_14.png)
 
-![A](assets/show_filter_city_map.png)
+Wow, this might be something to take note of. We should help those truck owners out and figure out how we can increase our service or quality, since it seems customers are disappointed and have bad associations with those trucks in those cities. 
 
-![A](assets/single_value_list.png)
+![completed_wkbk](assets/Tableau_wbook_15.png)
 
-<br>
+Finally, we’ll want to see if it’s a busy truck, and how many orders are coming through those trucks, to figure out where to focus first. I’ll drag out ‘Count Orders_V’ onto the Color tab in the details pane.
 
-We can see from clicking through different cities and the size of the circles and the color legend that there seems to be a fairly linear relationship between quantity and order total. We would expect that. Let's create a calculated field that gives us the ratio of products sold vs total revenue. If it's higher, that means that the city is selling more menu items that are less expensive, whereas lower ratio means that the food trucks are selling more expensive items. 
+![Publish_wkbk](assets/Tableau_Dash_16.png)
 
-We'll create a calculated field by navigating to the data pane and right clicking on the carrot near the search bar. 
+Looks like we should focus on trucks in Mumbai first, as they are getting the most orders, and have negative reviews. 
 
- ![A](assets/create_calculated_field.png)
-
-<br>
-
-Name your calculated field 'Quantity/Order Total Ratio' and enter in the text below:
-
-```
-SUM([Quantity])/SUM([Order Total])
-```
-Then, click OK. 
-
- ![A](assets/calculated_field_ratio.png)
-
-<br>
-
-We'll replace the Quantity and Order total fields on the Color and Size marks card with this field. 
-
- ![A](assets/add_ratio_to_color_and_size.png)
-
-<br>
-
-Finally, change the color legend so it is more easily distinguishable. Right click the color legend and select 'Edit Colors'. Then, select the Orange-Blue diverging scale. Reverse the colors and close out of the dialog box.
-
-![A](assets/find_color_legend.png)
-
-![A](assets/edit_colors.png)
-
-![A](assets/orange_blue_diverging.png)
-
-![A](assets/reversed_legend.png)
- 
-
-<br>
-
-The reason we reversed the colors is that we want to keep a closer eye on trucks with higher ratios. A higher quantity to order total ratio indicates that folks are buying more, cheaper items, as compared to higher-cost items. Of course, this data set does not include profit information, but it can be something we explore for a potential marketing campaign or GTM study on more expensive items vs more profitable items. 
-
-![A](assets/finished_map.png)
-
-
-Rename the sheet 'Quantity to Order Total Ratio by Truck' by right-clicking on the Sheet1 label on the bottom bar and selecting 'Rename'.
-
- ![A](assets/Tab_3.1.png)
-
-<br>
-
-Let's open another sheet to do some more analysis. Click the + button on the bottom bar to open a new sheet. Start by visualizing the Sales Data for each city over time. Find the 'Order Total' Field on the left hand pane under the 'Orders_V' table dropdown, and double click the field. This will automatically add the field to the canvas, and visualize it in the most optimal way. In this case, it will sum up the Order Totals and present it in a bar chart. If we translated this to SQL, it would be 'select sum(Order_Totals) from Orders_V'.
-
- ![A](assets/drag_order_total_to_rows.png)
-
-<br>
-
-Now, lets start to bucket or group the order totals by another metric. We'll use date in this case. From the left pane, drag the 'Date' field from the 'Orders_V' table to the Columns shelf. You'll see that Tableau automatically aggregates dates up to the year level first. Let's change that to a more granular aggregation, since we are only working with 2 years of data.
-
- ![A](assets/drag_date_to_columns.png)
-
-
-By clicking the blue pill that says 'Year(Date)', we can see multiple options for aggregating the date. The first set of year/month/day will aggregate in a discrete manner. For example, if we selected 'Month', Tableau would aggregate the Order Totals for all the months of 2021, Jan 2022, Jan 2023, etc. The second set of 'year/month/day' will create a continuous time series of order totals. Let's select 'Week Number' from the 2nd set. You'll see a line chart appear with data on Order Totals from 2022-2023.
-
- ![A](assets/date_agg_options.png)
- <br>
- ![A](assets/change_week_agg_result.png)
-<br>
-
-Now, let's split out the line chart further and break it down by City. We can add a third field to the visualization by adding 'Primary City' to Color on the marks card. This will break out the data by each city and assign it a different color. You'll see the legend on the right hand side pop up. Let's also rename this sheet by clicking on the 'Sheet 2' label on the bottom bar and renaming it 'City Sales by Week'.
-
- ![A](assets/rename_sheet1.png)
-
-<br>
-
-Looking at this line graph, here's more than one city with a massive drop in sales in March. These are Berlin, New York City, and Hamburg (Hamburg which we already visualized in snowflake). Let's add a filter so that I can narrow it down to those three cities. Drag the 'City' field to the filters card. When the filter card pops up, select just a few cities, including Berlin, NYC and Hamburg. Paris had a few fluctuations in sales as well, so we can select the field as well.
-
-
-<br>
-
-Great. Let's see if they also had high wind speed during those days and months with lower sales. Duplicate the sheet by right-clicking the bar along the bottom and selecting 'Duplicate'. Then, make sure that max wind speed is averaged by right clicking the field and selecitng 'Data properties' -> 'Aggregation' -> Avg. Then, drag out the 'Max Wind Speed' field to Rows. This may take a few minutes to render.
-
- ![A](assets/default_aggregation.png)
-
- ![A](assets/add_avg_wind_speed.png)
-
-
-
-<br>
-
-We can see that the avg wind speed does seem to have somewhat of a negative correlation with order totals. In order to further investigate the pattern, we can actually very quickly check the trends of the lines by reversing the axis. Right-click the y-axis for the wind speed, go to 'Edit Axis' and checked the 'reversed' box. You may expect the wind speed line to look similar to the Order Totals line.
-
-  ![A](assets/reversed_axis.png)
-
-<br>
-
-It doesn't seem to look very similar, and there's also some null values - NYC has no wind speed data. We can make a note to ask my data engineers about that later. Remove the Wind Speed field and the city filter from the visualization. Change the field from 'Primary City' to 'Truck Brand Name' to get a sense of how the trucks are performing over time. Rename the sheet 'Truck Performance over Time'.
-
-![A](assets/Truck_Performance_over_Time.png)
-
-<br>
-
-Now, let's look some of the most popular products. We'll measure by the quantity ordered. Open a new sheet, then drag 'Quantity' out onto the columns shelf. 
- ![A](assets/drag_out_quantity.png)
-
- <br>
-
- Drag 'Menu Item Name' onto the rows shelf and sort the sheet by descending quantity. You can just click the sort icon next to Quantity label at the bottom.
-
- ![A](assets/drag_out_menu_item_name.png)
-
- <br>
- 
-Then,  exclude the top three items, Ice Tea, Bottled Soda and Bottled Water, since they are constants at every food truck. Do that by using command-click on both of the items, then selecting 'Exclude'.
-
-![A](assets/exclude_drinks.png)
-  
-<br>
-
-Let's also change the way the data is visualized. A bar chart is great, but ultimately, since the numbers are so high, the differences in bar lengths are a difficult to gague. we also need to add a label so that we can see the nuances between some of the top selling products. Drag another copy of sum(Quantity) to the label square on the marks card to add more detail.
-
-![A](assets/quantity_label_marks_card.png)
-
-<br>
-
-Next up we'll filter to just the top 10 products. The Menu Item Name pill is already on the filter card, so right click and select 'Edit Filter' to open it up. Navigate to the 'Top' tab and select 'By Field', then make sure that the filter grabs the top 10 by quantity. Click OK. Rename the sheet 'Top Selling Menu Items'.
-
-  ![A](assets/edit_filter.png)
-  
-  ![A](assets/top_10_products_filter.png)
-  
- ![A](assets/rename_top_selling_products.png)
- 
-
-Finally, Let's look at truck performance across all cities. To do that, we'll measure performance by total sales, or 'Order Total' field. Drag out the 'Order Total' field onto the columns shelf. 
-
- ![A](assets/reversed_axis.png)
-<br>
-
-Then, click and drag 'Truck Brand Name' to the rows shelf. Add a label to the bar charts, same as we did for the Top Selling Product sheet. Drag Order Totals to the labels tile on the marks card. Sort the sheet.
-
-![A](assets/drag_out_truck.png)
-
-![A](assets/truck_with_labels.png)
-
-<br>
-
-Filter the truck performance to the top 5 trucks. Do the same thing as for products, but just grab the top 5 by Order Total for truck names.
-
- ![A](assets/truck_top_5_filter.png)
-
-Rename the sheet 'Food Truck Performance by Total Revenue'.
-
- ![A](assets/finish_top_selling_products.png)
- ![A](assets/finish_top_trucks_bar.png)
+Save the workbook.
 
 
 <!-- ------------------------ -->
@@ -630,26 +471,51 @@ Rename the sheet 'Food Truck Performance by Total Revenue'.
 
 <br>
 
-## Create a Dashboard
+## Publish
+![Publish_final_reviews](assets/Tableau_publish_rw_work_17.png)
 
-We have all of this information, but lets put it all together to see if we can gain insights from looking at all of the separate information in one place. Click on the waffle icon in the bottom bar to create a new dashboard.
+Lets see if we can track that over time and get alerts on any dropping review sentiment using Tableau Pulse. Save this
+![Close](assets/Tableau_close_18.png)
 
-Just like fields dragged onto the canvas, you can drag sheets onto the dashboard to compose them. Let's drag our Time series with just order totals out, our map of Quantity/Order Total Ratio by city, then drag out 'Top Selling Products' and 'Food Truck Performance by Total Revenue' sheets. Finally, in order to make sure the filters carry over, apply the City filter with the single list to all sheets using this data source. To do that, simply click the carrot icon on the selected City filter, then click 'Apply to Worksheets' -> 'All using this datasource'. 
 
- ![A](assets/apply_data_source_filter.png)
+<br>
+Next, navigate to Tableau Pulse. Click ‘New Metric Definition’.
 
-Interesting. The most frequently sold items are not part of the top food truck's menu. Next, we might want to speak to the data engineers on the Snowflake team to add profit to the data source for future analysis on most profitable items vs most profitable trucks. Rename the dashboard 'Tasty Bytes Sales Analysis'. Click the checkbox in the bottom left corner that says 'Show dashboard title'.
+![Pulse](assets/Tableau_Pulse_19.png)
 
- ![A](assets/finished_dash.png)
+
+![pulse_metric](assets/Tableau_pulse_metric_20.png)
+
+Select the data source you just published named ‘Frostbyte’.
+
+![create_def](assets/Tableau_create_pulse_21.png)
+Name your pulse metric ‘Average Review Sentiment’ and fill out the values in the screenshot. We want to track average final review sentiment over the date. Select ‘Review Sentiment’, ‘Average aggregation, and ‘Review Date’ as the time dimension.
+
+![save_metric](assets/Tableau_Pulse_save_22.png)
 
 <br>
 
-Let's publish this dashboard to share this insight and feedback with others. Click 'Publish As' in the top right hand corner. Give your Dashboard a name and you can store it in your personal space for now. Once you click save, the published dashboard should reload. 
+Add filters such as ‘Truck Brand Name’ and ‘Primary City’.
 
- ![A](assets/publish_as.png)
+![filter](assets/Tableau_P_filter_23.png)
 
- ![A](assets/name_workbook.png)
+![Save_Insight](assets/Tableau_24.png)
 
+Click Next, Next, until you get to the Records and Transitions page. Since we don’t have unique identifiers for the reviews, we will turn this setting off.
+
+![sent_metric](assets/Tableau_25.png)
+
+Your Metric should look something like this. Click save, and your published metric should load automatically.
+![present_metric](assets/Tableau_26.png)
+
+New: Set a goal to 0.25, or a value between 0 and 1, to get notified every time average sentiment across all trucks goes below that number. 
+
+![Goal](assets/Tableau_27.png)
+
+Click Save.
+
+
+Congratulations! You have successfully completed the Tableau portion.
 
 
 <br>
