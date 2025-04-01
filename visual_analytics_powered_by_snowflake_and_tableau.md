@@ -143,12 +143,11 @@ CREATE OR REPLACE STAGE frostbyte_tasty_bytes.raw_customer.stg_truck_reviews
  --- Test if your AWS Storage is Accessible 
 SELECT   SYSTEM$VALIDATE_STORAGE_INTEGRATION('<integration_name>',    's3://<bucket>/',    'validate_all.txt', 'all'); 
 ```
-#### Should show success for READ and LIST  
+#### Output should show success for READ and LIST  
 {
   "status" : "success","actions" : { "READ" : { "status" : "success" }, "LIST" : { "status" : "success" }}
 }
 
-```
 
 ### Create Snowflake managed Iceberg Tables to access Datalake 
 Download and Run Queries on Customer review Data
