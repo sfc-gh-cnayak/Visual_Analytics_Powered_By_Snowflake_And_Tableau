@@ -22,7 +22,7 @@ Join Snowflake and Tableau for an instructor-led hands-on lab to build governed,
 ### What You’ll Learn
 
 * Analyzing structured and semi-structured data
-* Levergaging Snowflake Marketplace and integrating External DataLakes 
+* Levergaging Snowflake Marketplace and integrating dataLakes using Iceberg tables
 * Snowflake Generative AI capability
 * Building Visualization using Tableau on Snowflake tables. 
 
